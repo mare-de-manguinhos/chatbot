@@ -1,0 +1,208 @@
+{
+  "name": "Bot Pescadores - Transcrição de Áudio (Evolution + Gemini)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "evolution",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "id": "a7376c08-5dce-4739-bb03-463b464c5078",
+      "name": "Webhook Evolution API",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        144,
+        -64
+      ],
+      "webhookId": "evolution"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Filtra apenas mensagens de áudio recebidas\n// A Evolution API envia vários tipos de eventos\n\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const data = item.json;\n  const body = data.body || data;\n  \n  if (body.event !== 'messages.upsert') continue;\n  \n  const message = body?.data?.message;\n  const key = body?.data?.key;\n  \n  if (!message?.audioMessage) continue;\n  \n  // key.remoteJid = identificador do chat (pode ser LID ou número)\n  // Para responder, usamos o remoteJid completo (incluindo @lid se for o caso)\n  // O campo 'sender' na raiz é SEMPRE o número do bot, NÃO de quem mandou\n  const remoteJid = key.remoteJid; // ex: '123456@lid' ou '5527999@s.whatsapp.net'\n  \n  results.push({\n    json: {\n      messageId: key.id,\n      remoteJid: remoteJid,\n      pushName: body?.data?.pushName || 'Desconhecido',\n      instanceName: body?.instance || '',\n      audioSeconds: message.audioMessage.seconds || 0,\n      mimetype: message.audioMessage.mimetype || 'audio/ogg',\n      isPtt: message.audioMessage.ptt || false\n    }\n  });\n}\n\nif (results.length === 0) return [];\nreturn results;"
+      },
+      "id": "40469786-03e1-41db-acd9-96e96f40356a",
+      "name": "Filtrar Mensagens de Áudio",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        384,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://bot-evolution:8080/chat/getBase64FromMediaMessage/{{ $json.instanceName }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "sua_chave_api_super_secreta"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"message\": {\n    \"key\": {\n      \"id\": \"{{ $json.messageId }}\"\n    }\n  },\n  \"convertToMp4\": false\n}",
+        "options": {}
+      },
+      "id": "3f02ae36-5822-4b9b-84cc-f7bd65e5d68c",
+      "name": "Download Áudio (Evolution API)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        624,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Converte o áudio base64 retornado pela Evolution API em dados binários\n// para enviar ao Gemini\n\nconst item = $input.first();\nconst base64Data = item.json.base64;\nconst mimetype = item.json.mimetype || 'audio/ogg';\n\nif (!base64Data) {\n  throw new Error('Nenhum dado de áudio base64 encontrado na resposta da Evolution API. Verifique se DATABASE_SAVE_DATA_NEW_MESSAGE=true está configurado.');\n}\n\n// Preserva os dados do item anterior (messageId, remoteJid, etc.)\n// Precisamos pegar do nó \"Filtrar Mensagens de Áudio\"\nconst filtroData = $('Filtrar Mensagens de Áudio').first().json;\n\nreturn {\n  json: {\n    remoteJid: filtroData.remoteJid,\n    pushName: filtroData.pushName,\n    instanceName: filtroData.instanceName,\n    audioSeconds: filtroData.audioSeconds\n  },\n  binary: {\n    audio: {\n      data: base64Data,\n      mimeType: mimetype,\n      fileName: 'audio_pescador.ogg'\n    }\n  }\n};"
+      },
+      "id": "a9ae96b0-8322-4ccc-a740-20aabc65019c",
+      "name": "Base64 → Binário",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        864,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "inputType": "binary",
+        "binaryPropertyName": "audio",
+        "options": {}
+      },
+      "id": "6ccc3143-6c5a-4255-9b71-f8c6172362b4",
+      "name": "Gemini - Transcrever Áudio",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        -64
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "MbogVNpw0VmNtcgz",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://bot-evolution:8080/message/sendText/{{ $('Filtrar Mensagens de Áudio').first().json.instanceName }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "sua_chave_api_super_secreta"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('Filtrar Mensagens de Áudio').first().json.remoteJid }}\",\n  \"text\": \"🎤 *Transcrição do seu áudio:*\\n\\n{{ $json.content.parts[0].text }}\\n\\n---\\n_Bot Pescadores Manguinhos - Protótipo_\"\n}",
+        "options": {}
+      },
+      "id": "cde20ba7-8a92-4759-8bd6-9af12d137b0f",
+      "name": "Responder no WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1344,
+        -64
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Evolution API": {
+      "main": [
+        [
+          {
+            "node": "Filtrar Mensagens de Áudio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar Mensagens de Áudio": {
+      "main": [
+        [
+          {
+            "node": "Download Áudio (Evolution API)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Áudio (Evolution API)": {
+      "main": [
+        [
+          {
+            "node": "Base64 → Binário",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Base64 → Binário": {
+      "main": [
+        [
+          {
+            "node": "Gemini - Transcrever Áudio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini - Transcrever Áudio": {
+      "main": [
+        [
+          {
+            "node": "Responder no WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "b1826a2d-4eac-4fa9-8146-a9c0d4bffce3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6e88ab0933fadfeec9d59f1c95a282a51625ad05f9159d6a0aad356dd6128f87"
+  },
+  "id": "VBWOKS6HbidT0rJG",
+  "tags": [
+    {
+      "updatedAt": "2026-04-05T17:37:03.606Z",
+      "createdAt": "2026-04-05T17:37:03.606Z",
+      "id": "HzPXccVLHsORgLCk",
+      "name": "pescadores"
+    }
+  ]
+}

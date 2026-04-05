@@ -1,0 +1,18 @@
+# Arquivos temporários
+*.log
+*.txt
+qrcode.png
+
+# Variáveis de ambiente
+.env
+
+# Docker
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
