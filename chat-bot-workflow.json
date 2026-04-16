@@ -9,13 +9,13 @@
           "rawBody": false
         }
       },
-      "id": "a7376c08-5dce-4739-bb03-463b464c5078",
+      "id": "dc697bf0-7663-402e-ab7d-275748ebd34d",
       "name": "Webhook Evolution API",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        144,
-        -64
+        -288,
+        0
       ],
       "webhookId": "evolution"
     },
@@ -23,13 +23,13 @@
       "parameters": {
         "jsCode": "// Filtra apenas mensagens de áudio recebidas\n// A Evolution API envia vários tipos de eventos\n\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const data = item.json;\n  const body = data.body || data;\n  \n  if (body.event !== 'messages.upsert') continue;\n  \n  const message = body?.data?.message;\n  const key = body?.data?.key;\n  \n  if (!message?.audioMessage) continue;\n  \n  // key.remoteJid = identificador do chat (pode ser LID ou número)\n  // Para responder, usamos o remoteJid completo (incluindo @lid se for o caso)\n  // O campo 'sender' na raiz é SEMPRE o número do bot, NÃO de quem mandou\n  const remoteJid = key.remoteJid; // ex: '123456@lid' ou '5527999@s.whatsapp.net'\n  \n  results.push({\n    json: {\n      messageId: key.id,\n      remoteJid: remoteJid,\n      pushName: body?.data?.pushName || 'Desconhecido',\n      instanceName: body?.instance || '',\n      audioSeconds: message.audioMessage.seconds || 0,\n      mimetype: message.audioMessage.mimetype || 'audio/ogg',\n      isPtt: message.audioMessage.ptt || false\n    }\n  });\n}\n\nif (results.length === 0) return [];\nreturn results;"
       },
-      "id": "40469786-03e1-41db-acd9-96e96f40356a",
+      "id": "e9794c3b-0458-4056-a05c-2ef8725354ae",
       "name": "Filtrar Mensagens de Áudio",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        384,
-        -64
+        240,
+        0
       ]
     },
     {
@@ -50,26 +50,26 @@
         "jsonBody": "={\n  \"message\": {\n    \"key\": {\n      \"id\": \"{{ $json.messageId }}\"\n    }\n  },\n  \"convertToMp4\": false\n}",
         "options": {}
       },
-      "id": "3f02ae36-5822-4b9b-84cc-f7bd65e5d68c",
+      "id": "a5deb148-3463-4c87-80de-cfe7a5cc7449",
       "name": "Download Áudio (Evolution API)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        624,
-        -64
+        448,
+        0
       ]
     },
     {
       "parameters": {
         "jsCode": "// Converte o áudio base64 retornado pela Evolution API em dados binários\n// para enviar ao Gemini\n\nconst item = $input.first();\nconst base64Data = item.json.base64;\nconst mimetype = item.json.mimetype || 'audio/ogg';\n\nif (!base64Data) {\n  throw new Error('Nenhum dado de áudio base64 encontrado na resposta da Evolution API. Verifique se DATABASE_SAVE_DATA_NEW_MESSAGE=true está configurado.');\n}\n\n// Preserva os dados do item anterior (messageId, remoteJid, etc.)\n// Precisamos pegar do nó \"Filtrar Mensagens de Áudio\"\nconst filtroData = $('Filtrar Mensagens de Áudio').first().json;\n\nreturn {\n  json: {\n    remoteJid: filtroData.remoteJid,\n    pushName: filtroData.pushName,\n    instanceName: filtroData.instanceName,\n    audioSeconds: filtroData.audioSeconds\n  },\n  binary: {\n    audio: {\n      data: base64Data,\n      mimeType: mimetype,\n      fileName: 'audio_pescador.ogg'\n    }\n  }\n};"
       },
-      "id": "a9ae96b0-8322-4ccc-a740-20aabc65019c",
+      "id": "b7493f06-fc48-49e1-bf2b-5d99d1f73b29",
       "name": "Base64 → Binário",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        864,
-        -64
+        640,
+        0
       ]
     },
     {
@@ -85,17 +85,18 @@
         "binaryPropertyName": "audio",
         "options": {}
       },
-      "id": "6ccc3143-6c5a-4255-9b71-f8c6172362b4",
+      "id": "6468b473-7c7d-44f8-b06a-98e44377a96f",
       "name": "Gemini - Transcrever Áudio",
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
       "position": [
-        1104,
-        -64
+        864,
+        0
       ],
+      "retryOnFail": true,
       "credentials": {
         "googlePalmApi": {
-          "id": "MbogVNpw0VmNtcgz",
+          "id": "IRF1ZMsX0OAOpFpn",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -115,20 +116,341 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"number\": \"{{ $('Filtrar Mensagens de Áudio').first().json.remoteJid }}\",\n  \"text\": \"🎤 *Transcrição do seu áudio:*\\n\\n{{ $json.content.parts[0].text }}\\n\\n---\\n_Bot Pescadores Manguinhos - Protótipo_\"\n}",
+        "jsonBody": "={\n  \"number\": \"{{ $('Filtrar Mensagens de Áudio').first().json.remoteJid }}\",\n  \"text\": \"🎤 *Transcrição do seu áudio:*\\n\\n Pescador: {{ $json.output.pescador }} Peixe: {{ $json.output.peixe }} Quantidade: {{ $json.output.quantidade }} Preço:{{ $json.output.preco }} Peso:{{ $json.output.peso }}\\n\\n---\\n_Bot Pescadores Manguinhos - Protótipo_\"\n}",
         "options": {}
       },
-      "id": "cde20ba7-8a92-4759-8bd6-9af12d137b0f",
+      "id": "1f0abe93-803b-4e3c-96d2-908bcd923b1f",
       "name": "Responder no WhatsApp",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1344,
-        -64
+        1536,
+        0
       ]
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.content.parts[0].text }}",
+        "schemaType": "fromJson",
+        "jsonSchemaExample": "{\n    \"pescador\": \"Nome do pescador\",\n\t\"peixe\": \"salmao\",\n    \"quantidade\": 5,\n    \"preco\": 10,\n    \"peso\": 1\n}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        1072,
+        0
+      ],
+      "id": "4b500b7e-f924-43d2-b63c-37cea9a185f3",
+      "name": "Information Extractor"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        208
+      ],
+      "id": "fa4212a6-9bce-4ae5-9456-dd4492b3e3c7",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "IRF1ZMsX0OAOpFpn",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## TODO\nColocar validador de usuário cadastrado no sistema.\n(Falar com o grupo da associação)",
+        "height": 144
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -96,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "0570e2a9-4101-49c4-8d98-013bd5d861fa",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## TODO\n\nPegar  endpoint para postar os items no catálogo do pescador"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1472,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "0223d9ed-5763-4442-b21f-7c1eb443d79d",
+      "name": "Sticky Note1"
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Webhook Evolution API": [
+      {
+        "json": {
+          "headers": {
+            "accept": "application/json, text/plain, */*",
+            "content-type": "application/json",
+            "user-agent": "axios/1.13.2",
+            "content-length": "2892",
+            "accept-encoding": "gzip, compress, deflate, br",
+            "host": "bot-n8n:5678",
+            "connection": "keep-alive"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "event": "messages.upsert",
+            "instance": "teste",
+            "data": {
+              "key": {
+                "remoteJid": "5527995052526@s.whatsapp.net",
+                "remoteJidAlt": "5527995052526@s.whatsapp.net",
+                "fromMe": true,
+                "id": "3AC98FAA27F14EFC582A",
+                "participant": "",
+                "addressingMode": "lid"
+              },
+              "pushName": "Guilherme",
+              "status": "SERVER_ACK",
+              "message": {
+                "audioMessage": {
+                  "url": "https://mmg.whatsapp.net/v/t62.7117-24/673840651_941732808569660_6940506216289397327_n.enc?ccb=11-4&oh=01_Q5Aa4QHefyztchDRL2gVj2MX2M2d1A9cdzCUB89EMxE-RVqMdA&oe=6A08291C&_nc_sid=5e03e0&mms3=true",
+                  "mimetype": "audio/ogg; codecs=opus",
+                  "fileSha256": {
+                    "0": 56,
+                    "1": 150,
+                    "2": 185,
+                    "3": 147,
+                    "4": 103,
+                    "5": 72,
+                    "6": 150,
+                    "7": 78,
+                    "8": 50,
+                    "9": 171,
+                    "10": 244,
+                    "11": 158,
+                    "12": 199,
+                    "13": 116,
+                    "14": 48,
+                    "15": 120,
+                    "16": 78,
+                    "17": 137,
+                    "18": 165,
+                    "19": 127,
+                    "20": 169,
+                    "21": 95,
+                    "22": 251,
+                    "23": 107,
+                    "24": 166,
+                    "25": 149,
+                    "26": 13,
+                    "27": 98,
+                    "28": 1,
+                    "29": 132,
+                    "30": 94,
+                    "31": 127
+                  },
+                  "fileLength": {
+                    "low": 13072,
+                    "high": 0,
+                    "unsigned": true
+                  },
+                  "seconds": 5,
+                  "ptt": true,
+                  "mediaKey": {
+                    "0": 36,
+                    "1": 90,
+                    "2": 181,
+                    "3": 142,
+                    "4": 172,
+                    "5": 91,
+                    "6": 0,
+                    "7": 103,
+                    "8": 200,
+                    "9": 84,
+                    "10": 18,
+                    "11": 86,
+                    "12": 200,
+                    "13": 33,
+                    "14": 108,
+                    "15": 220,
+                    "16": 239,
+                    "17": 103,
+                    "18": 62,
+                    "19": 197,
+                    "20": 94,
+                    "21": 238,
+                    "22": 245,
+                    "23": 35,
+                    "24": 99,
+                    "25": 156,
+                    "26": 114,
+                    "27": 76,
+                    "28": 91,
+                    "29": 73,
+                    "30": 143,
+                    "31": 219
+                  },
+                  "fileEncSha256": {
+                    "0": 236,
+                    "1": 246,
+                    "2": 195,
+                    "3": 46,
+                    "4": 186,
+                    "5": 206,
+                    "6": 111,
+                    "7": 63,
+                    "8": 249,
+                    "9": 35,
+                    "10": 131,
+                    "11": 68,
+                    "12": 243,
+                    "13": 227,
+                    "14": 216,
+                    "15": 190,
+                    "16": 37,
+                    "17": 169,
+                    "18": 236,
+                    "19": 214,
+                    "20": 154,
+                    "21": 143,
+                    "22": 184,
+                    "23": 31,
+                    "24": 76,
+                    "25": 161,
+                    "26": 126,
+                    "27": 78,
+                    "28": 90,
+                    "29": 246,
+                    "30": 13,
+                    "31": 109
+                  },
+                  "directPath": "/v/t62.7117-24/673840651_941732808569660_6940506216289397327_n.enc?ccb=11-4&oh=01_Q5Aa4QHefyztchDRL2gVj2MX2M2d1A9cdzCUB89EMxE-RVqMdA&oe=6A08291C&_nc_sid=5e03e0&_nc_hot=1776339474",
+                  "mediaKeyTimestamp": {
+                    "low": 1776339449,
+                    "high": 0,
+                    "unsigned": false
+                  },
+                  "contextInfo": {
+                    "mentionedJid": [],
+                    "groupMentions": [],
+                    "statusAttributions": [],
+                    "pairedMediaType": 0
+                  },
+                  "streamingSidecar": {
+                    "0": 164,
+                    "1": 162,
+                    "2": 149,
+                    "3": 170,
+                    "4": 69,
+                    "5": 140,
+                    "6": 210,
+                    "7": 204,
+                    "8": 90,
+                    "9": 111
+                  },
+                  "waveform": {
+                    "0": 0,
+                    "1": 13,
+                    "2": 23,
+                    "3": 18,
+                    "4": 13,
+                    "5": 11,
+                    "6": 9,
+                    "7": 7,
+                    "8": 6,
+                    "9": 5,
+                    "10": 56,
+                    "11": 99,
+                    "12": 96,
+                    "13": 96,
+                    "14": 98,
+                    "15": 92,
+                    "16": 80,
+                    "17": 87,
+                    "18": 100,
+                    "19": 100,
+                    "20": 100,
+                    "21": 100,
+                    "22": 100,
+                    "23": 100,
+                    "24": 100,
+                    "25": 100,
+                    "26": 89,
+                    "27": 76,
+                    "28": 89,
+                    "29": 100,
+                    "30": 100,
+                    "31": 100,
+                    "32": 100,
+                    "33": 100,
+                    "34": 100,
+                    "35": 100,
+                    "36": 100,
+                    "37": 76,
+                    "38": 62,
+                    "39": 86,
+                    "40": 98,
+                    "41": 93,
+                    "42": 87,
+                    "43": 81,
+                    "44": 88,
+                    "45": 100,
+                    "46": 83,
+                    "47": 73,
+                    "48": 90,
+                    "49": 97,
+                    "50": 92,
+                    "51": 82,
+                    "52": 69,
+                    "53": 81,
+                    "54": 100,
+                    "55": 100,
+                    "56": 99,
+                    "57": 95,
+                    "58": 95,
+                    "59": 98,
+                    "60": 98,
+                    "61": 96,
+                    "62": 81,
+                    "63": 64
+                  }
+                }
+              },
+              "contextInfo": {
+                "mentionedJid": [],
+                "groupMentions": [],
+                "statusAttributions": [],
+                "pairedMediaType": 0
+              },
+              "messageType": "audioMessage",
+              "messageTimestamp": 1776339475,
+              "instanceId": "c93f97b1-38b9-4df8-ac38-94bc2bd99b37",
+              "source": "ios"
+            },
+            "destination": "http://bot-n8n:5678/webhook-test/evolution",
+            "date_time": "2026-04-16T08:37:59.427Z",
+            "sender": "5527995052526@s.whatsapp.net",
+            "server_url": "http://localhost:8080",
+            "apikey": "898AB057B8F6-460D-8E0E-E8F6631CE05E"
+          },
+          "webhookUrl": "http://bot-n8n:5678/webhook-test/evolution",
+          "executionMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
   "connections": {
     "Webhook Evolution API": {
       "main": [
@@ -178,31 +500,53 @@
       "main": [
         [
           {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        [
+          {
             "node": "Responder no WhatsApp",
             "type": "main",
             "index": 0
           }
         ]
       ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "b1826a2d-4eac-4fa9-8146-a9c0d4bffce3",
+  "versionId": "645f01ae-ef6c-4342-b657-8ffbe43fee17",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "6e88ab0933fadfeec9d59f1c95a282a51625ad05f9159d6a0aad356dd6128f87"
+    "instanceId": "6b175a7a6c084c33d4bdb5b482d473e851252f046be3dfeb0ad39b293df0012d"
   },
-  "id": "VBWOKS6HbidT0rJG",
+  "id": "YQ6mlynqaLxH5QyC",
   "tags": [
     {
-      "updatedAt": "2026-04-05T17:37:03.606Z",
-      "createdAt": "2026-04-05T17:37:03.606Z",
-      "id": "HzPXccVLHsORgLCk",
-      "name": "pescadores"
+      "name": "pescadores",
+      "id": "ArjYULWEaANjxw2C",
+      "updatedAt": "2026-04-16T11:31:00.935Z",
+      "createdAt": "2026-04-16T11:31:00.935Z"
     }
   ]
 }
