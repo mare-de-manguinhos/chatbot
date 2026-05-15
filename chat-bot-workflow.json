@@ -57,7 +57,8 @@
       "position": [
         448,
         0
-      ]
+      ],
+      "onError": "continue"
     },
     {
       "parameters": {
@@ -94,6 +95,7 @@
         0
       ],
       "retryOnFail": true,
+      "onError": "continue",
       "credentials": {
         "googlePalmApi": {
           "id": "IRF1ZMsX0OAOpFpn",
@@ -142,7 +144,35 @@
         0
       ],
       "id": "4b500b7e-f924-43d2-b63c-37cea9a185f3",
-      "name": "Information Extractor"
+      "name": "Information Extractor",
+      "onError": "continue"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://bot-evolution:8080/message/sendText/{{ $('Filtrar Mensagens de Áudio').first().json.instanceName }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "sua_chave_api_super_secreta"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('Filtrar Mensagens de Áudio').first().json.remoteJid }}\",\n  \"text\": \"⚠️ *Não foi possível completar a operação, tente novamente mais tarde.*\\n\\n---\\n_Bot Pescadores Manguinhos_\"\n}",
+        "options": {}
+      },
+      "id": "7f8a9b0c-1234-4567-890a-bcdef0123456",
+      "name": "Responder Erro",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        400
+      ]
     },
     {
       "parameters": {
@@ -189,6 +219,20 @@
       "typeVersion": 1,
       "id": "0223d9ed-5763-4442-b21f-7c1eb443d79d",
       "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## TRATAMENTO DE ERROS\nSe qualquer erro ocorrer no Download, Gemini ou Extração, o bot enviará uma mensagem automática de erro para o pescador.",
+        "color": 1
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        800,
+        400
+      ],
+      "typeVersion": 1,
+      "id": "error-note-id",
+      "name": "Sticky Note2"
     }
   ],
   "pinData": {},
@@ -223,6 +267,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Responder Erro",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -245,6 +296,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Responder Erro",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -253,6 +311,13 @@
         [
           {
             "node": "Responder no WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder Erro",
             "type": "main",
             "index": 0
           }
