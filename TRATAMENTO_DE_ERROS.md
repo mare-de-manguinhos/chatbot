@@ -1,4 +1,4 @@
-# Erros Tratados no Bot 🛡️
+# Erros Tratados no Bot 
 
 O bot agora detecta falhas nos seguintes pontos e avisa o pescador automaticamente.
 
