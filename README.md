@@ -125,8 +125,23 @@ Webhook → Filtrar Áudio → Download Áudio → Base64→Binário → Gemini 
 chat-bot-manguinhos/
 ├── docker-compose.yml          # Infraestrutura (PostgreSQL, Redis, n8n, Evolution API)
 ├── chat-bot-workflow.json      # Workflow n8n (importar no painel)
+├── .specify/memory/constitution.md # Regras de governanca do projeto
 └── README.md                   # Este arquivo
 ```
+
+## 📜 Constituição do Projeto
+
+Este repositorio adota uma constituicao em `.specify/memory/constitution.md` com quatro
+principios obrigatorios:
+
+1. **Confiabilidade do Fluxo**: o pipeline audio -> transcricao -> resposta nunca silencia
+   erros e sempre retorna mensagem amigavel ao pescador.
+2. **Infraestrutura como Codigo**: toda configuracao operacional vive em
+   `docker-compose.yml` e no repositorio.
+3. **Baixo Custo Operacional**: prioriza APIs gratuitas (Gemini AI Studio) e exige
+   justificativa explicita para servicos pagos.
+4. **Extensibilidade Incremental**: novas features entram como nos n8n isolados, sem
+   refatoracao ampla do fluxo existente.
 
 ---
 

@@ -16,3 +16,9 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# teste-chatbot
+teste-chatbot/audio/
+teste-chatbot/banco.db
+teste-chatbot/frontend/node_modules/
+teste-chatbot/frontend/dist/
