@@ -34,7 +34,6 @@ services:
       timeout: 5s
       retries: 5
 
-# Configuração do n8n
   n8n:
     image: docker.n8n.io/n8nio/n8n
     container_name: bot-n8n
