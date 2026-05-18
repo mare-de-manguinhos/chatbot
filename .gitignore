@@ -1,6 +1,7 @@
 # Arquivos temporários
 *.log
 *.txt
+!requirements.txt
 qrcode.png
 
 # Variáveis de ambiente
