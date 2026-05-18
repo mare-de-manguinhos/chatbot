@@ -1,50 +1,89 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Version change: template -> 1.0.0
+- Modified principles:
+	- [PRINCIPLE_1_NAME] -> I. Confiabilidade do Fluxo
+	- [PRINCIPLE_2_NAME] -> II. Infraestrutura como Codigo
+	- [PRINCIPLE_3_NAME] -> III. Baixo Custo Operacional
+	- [PRINCIPLE_4_NAME] -> IV. Extensibilidade Incremental
+- Added sections:
+	- Restrições Operacionais
+	- Fluxo de Entrega e Qualidade
+- Removed sections:
+	- [PRINCIPLE_5_NAME]
+- Templates requiring updates:
+	- .specify/templates/plan-template.md ✅ updated
+	- .specify/templates/spec-template.md ✅ updated
+	- .specify/templates/tasks-template.md ✅ updated
+	- .specify/templates/commands/*.md ⚠ pending (diretorio ausente neste repositorio)
+	- README.md ✅ updated
+- Follow-up TODOs:
+	- None
+-->
+
+# Bot Pescadores Manguinhos Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Confiabilidade do Fluxo
+O pipeline audio -> transcricao -> resposta MUST tratar falhas de forma explicita em todos
+os nos criticos. Nenhuma excecao, timeout, resposta vazia, falha de rede ou erro de API
+MAY encerrar o processamento sem retorno ao pescador. Toda falha MUST resultar em
+mensagem amigavel no WhatsApp com orientacao de proxima acao.
+Rationale: a experiencia de uso depende de resposta previsivel em campo, mesmo quando
+servicos externos falham.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Infraestrutura como Codigo
+Toda configuracao operacional MUST ser versionada no repositorio e representada em
+docker-compose.yml (servicos, portas, variaveis, healthchecks e dependencias). Ajustes
+manuais em ambiente local, servidor ou painel de servico sem registro no repositorio
+MUST NOT ser parte do fluxo oficial.
+Rationale: reproducibilidade e recuperacao rapida exigem infraestrutura declarativa.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Baixo Custo Operacional
+Integracoes MUST priorizar opcoes gratuitas ou ja aprovadas no projeto, com preferencia
+por Gemini AI Studio para IA. Introducao de servicos pagos MAY ocorrer somente com
+justificativa explicita em documento de decisao, incluindo custo estimado, alternativa
+gratuita avaliada e impacto esperado.
+Rationale: sustentabilidade financeira e continuidade operacional dependem de custo
+controlado.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Extensibilidade Incremental
+Novas capacidades (por exemplo: extracao de dados, validacao ou enriquecimento) MUST ser
+adicionadas como nos n8n isolados e claramente delimitados, preservando o caminho
+existente do fluxo principal. Refatoracao ampla do fluxo atual MUST NOT ocorrer sem
+necessidade comprovada e plano de migracao validado.
+Rationale: evolucao incremental reduz risco de regressao em um fluxo de producao ativo.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+## Restrições Operacionais
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+- Fluxos n8n MUST registrar erros tecnicos em logs e retornar mensagem amigavel ao usuario.
+- Dependencias externas MUST declarar plano de fallback quando aplicavel.
+- Segredos e chaves MUST ser carregados por variaveis de ambiente declaradas no
+	docker-compose.yml ou arquivos de ambiente versionados como exemplo.
+- Mudancas que alterem custo mensal MUST incluir estimativa de custo antes da aprovacao.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Fluxo de Entrega e Qualidade
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
-
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- Toda especificacao de feature MUST citar como atende cada principio desta constituicao.
+- Todo plano tecnico MUST conter um Constitution Check com gates objetivos e verificaveis.
+- Toda lista de tarefas MUST incluir itens de: tratamento de erro no fluxo, atualizacao de
+	infraestrutura declarativa e validacao de custo operacional.
+- Revisao de mudanca MUST bloquear merge quando houver violacao sem justificativa aprovada.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+Esta constituicao prevalece sobre praticas ad hoc do projeto.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+- Emendas MUST ser propostas em pull request com: objetivo, impacto, plano de migracao e
+	atualizacao dos templates afetados.
+- Revisao de conformidade MUST ocorrer em toda PR, verificando aderencia aos quatro
+	principios e as restricoes operacionais.
+- Versionamento da constituicao MUST seguir SemVer:
+	- MAJOR para remocao/redefinicao incompativel de principio ou governanca.
+	- MINOR para novo principio, nova secao normativa ou expansao material de regras.
+	- PATCH para clarificacoes editoriais sem mudar obrigacoes normativas.
+- O arquivo README.md e os templates em .specify/templates MUST permanecer sincronizados
+	com esta constituicao.
+
+**Version**: 1.0.0 | **Ratified**: 2026-05-11 | **Last Amended**: 2026-05-11

@@ -32,6 +32,14 @@
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
 [Gates determined based on constitution file]
+- [ ] Fluxo audio -> transcricao -> resposta trata falhas sem silenciar erros e define
+  mensagem amigavel ao usuario final.
+- [ ] Toda mudanca de infraestrutura/configuracao esta declarada em docker-compose.yml
+  (sem dependencia de passos manuais fora do repositorio).
+- [ ] Dependencias pagas novas foram evitadas; se houver excecao, existe justificativa
+  explicita com custo estimado e alternativa gratuita avaliada.
+- [ ] Escopo foi modelado para extensibilidade incremental via nos n8n isolados, sem
+  refatoracao ampla do fluxo existente.
 
 ## Project Structure
 

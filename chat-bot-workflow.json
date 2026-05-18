@@ -13,10 +13,7 @@
       "name": "Webhook Evolution API",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [
-        -288,
-        0
-      ],
+      "position": [-288, 0],
       "webhookId": "evolution"
     },
     {
@@ -27,10 +24,7 @@
       "name": "Filtrar Mensagens de Áudio",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        240,
-        0
-      ]
+      "position": [240, 0]
     },
     {
       "parameters": {
@@ -54,10 +48,8 @@
       "name": "Download Áudio (Evolution API)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [
-        448,
-        0
-      ]
+      "position": [448, 0],
+      "onError": "continueErrorOutput"
     },
     {
       "parameters": {
@@ -67,10 +59,7 @@
       "name": "Base64 → Binário",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        640,
-        0
-      ]
+      "position": [640, 0]
     },
     {
       "parameters": {
@@ -89,17 +78,69 @@
       "name": "Gemini - Transcrever Áudio",
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1,
-      "position": [
-        864,
-        0
-      ],
+      "position": [864, 0],
       "retryOnFail": true,
+      "onError": "continueErrorOutput",
       "credentials": {
         "googlePalmApi": {
           "id": "IRF1ZMsX0OAOpFpn",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.content.parts[0].text }}",
+        "options": {
+          "systemMessage": "Você é um assistente especializado em processar pedidos de venda de peixes de pescadores brasileiros.\n\nVocê receberá a transcrição de um áudio de um pescador informando o que pescou e por quanto quer vender.\n\nSua tarefa é extrair as informações e retornar APENAS um objeto JSON válido, sem nenhum texto adicional, sem blocos de markdown.\n\nCampos a extrair:\n- pescador: nome do pescador (string, ou null se não mencionado)\n- peixe: tipo ou espécie do peixe pescado (string, OBRIGATÓRIO)\n- quantidade: número de peixes ou unidades (inteiro, ou null se não informado)\n- peso: peso total em kg (número decimal, ou null se não informado)\n- preco: preço de venda em reais (número decimal, OBRIGATÓRIO)\n- unidade_preco: como o preço é cobrado - use \"kg\" se for por quilo, \"unidade\" se for por peixe\n\nREGRAS DE VALIDAÇÃO:\n1. O campo \"peixe\" é obrigatório. Se não for mencionado no áudio, retorne erro.\n2. O campo \"preco\" é obrigatório. Se não for mencionado, retorne erro.\n3. Pelo menos \"quantidade\" OU \"peso\" deve ser informado. Se nenhum dos dois for mencionado, retorne erro.\n\nQuando TODAS as informações obrigatórias estiverem presentes, retorne exatamente neste formato:\n{\"status\":\"ok\",\"data\":{\"pescador\":null,\"peixe\":\"nome do peixe\",\"quantidade\":null,\"peso\":null,\"preco\":0.0,\"unidade_preco\":\"kg\"}}\n\nQuando faltar alguma informação obrigatória, retorne exatamente neste formato:\n{\"status\":\"erro\",\"mensagem\":\"[mensagem amigável e direta explicando o que faltou e pedindo para reenviar o áudio com as informações completas]\"}\n\nRetorne APENAS o objeto JSON. Sem markdown, sem blocos de código, sem explicações adicionais."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [1072, 0],
+      "id": "c1a2b3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "AI Agent - Extração e Validação",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const agentOutput = $json.output || '';\n\nlet parsed;\ntry {\n  let cleaned = agentOutput.trim();\n  if (cleaned.startsWith('```')) {\n    cleaned = cleaned.replace(/^```[a-z]*\\n?/, '').replace(/\\n?```$/, '');\n  }\n  parsed = JSON.parse(cleaned);\n} catch (e) {\n  parsed = {\n    status: 'erro',\n    mensagem: 'Não consegui processar sua mensagem. Por favor, tente novamente enviando o áudio informando: tipo de peixe, quantidade ou peso, e o preço de venda.'\n  };\n}\n\nreturn [{ json: parsed }];"
+      },
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567891",
+      "name": "Verificar Resultado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1280, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-status-ok",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "ok",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567892",
+      "name": "Sucesso ou Erro?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1488, 0]
     },
     {
       "parameters": {
@@ -116,33 +157,62 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"number\": \"{{ $('Filtrar Mensagens de Áudio').first().json.remoteJid }}\",\n  \"text\": \"🎤 *Transcrição do seu áudio:*\\n\\n Pescador: {{ $json.output.pescador }} Peixe: {{ $json.output.peixe }} Quantidade: {{ $json.output.quantidade }} Preço:{{ $json.output.preco }} Peso:{{ $json.output.peso }}\\n\\n---\\n_Bot Pescadores Manguinhos - Protótipo_\"\n}",
+        "jsonBody": "={\n  \"number\": \"{{ $('Filtrar Mensagens de Áudio').first().json.remoteJid }}\",\n  \"text\": \"✅ *Anúncio registrado com sucesso!*\\n\\n🐟 *Peixe:* {{ $json.data.peixe }}\\n📦 *Quantidade:* {{ $json.data.quantidade !== null ? $json.data.quantidade + ' unidades' : 'Não informado' }}\\n⚖️ *Peso:* {{ $json.data.peso !== null ? $json.data.peso + ' kg' : 'Não informado' }}\\n💰 *Preço:* R$ {{ $json.data.preco }} por {{ $json.data.unidade_preco }}\\n👤 *Pescador:* {{ $json.data.pescador || 'Não informado' }}\\n\\n_Seu produto será publicado no catálogo em breve._\\n\\n---\\n_Bot Pescadores Manguinhos_\"\n}",
         "options": {}
       },
       "id": "1f0abe93-803b-4e3c-96d2-908bcd923b1f",
       "name": "Responder no WhatsApp",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [
-        1536,
-        0
-      ]
+      "position": [1696, -120]
     },
     {
       "parameters": {
-        "text": "={{ $json.content.parts[0].text }}",
-        "schemaType": "fromJson",
-        "jsonSchemaExample": "{\n    \"pescador\": \"Nome do pescador\",\n\t\"peixe\": \"salmao\",\n    \"quantidade\": 5,\n    \"preco\": 10,\n    \"peso\": 1\n}",
+        "method": "POST",
+        "url": "=http://bot-evolution:8080/message/sendText/{{ $('Filtrar Mensagens de Áudio').first().json.instanceName }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "sua_chave_api_super_secreta"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('Filtrar Mensagens de Áudio').first().json.remoteJid }}\",\n  \"text\": \"⚠️ {{ $json.mensagem }}\\n\\n---\\n_Bot Pescadores Manguinhos_\"\n}",
         "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
-      "typeVersion": 1.2,
-      "position": [
-        1072,
-        0
-      ],
-      "id": "4b500b7e-f924-43d2-b63c-37cea9a185f3",
-      "name": "Information Extractor"
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567893",
+      "name": "Responder Erro Específico",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1696, 120]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://bot-evolution:8080/message/sendText/{{ $('Filtrar Mensagens de Áudio').first().json.instanceName }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "sua_chave_api_super_secreta"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $('Filtrar Mensagens de Áudio').first().json.remoteJid }}\",\n  \"text\": \"⚠️ *Não foi possível completar a operação, tente novamente mais tarde.*\\n\\n---\\n_Bot Pescadores Manguinhos_\"\n}",
+        "options": {}
+      },
+      "id": "7f8a9b0c-1234-4567-890a-bcdef0123456",
+      "name": "Responder Erro",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1200, 400]
     },
     {
       "parameters": {
@@ -150,10 +220,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
-      "position": [
-        1008,
-        208
-      ],
+      "position": [1008, 208],
       "id": "fa4212a6-9bce-4ae5-9456-dd4492b3e3c7",
       "name": "Google Gemini Chat Model",
       "credentials": {
@@ -169,26 +236,31 @@
         "height": 144
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -96,
-        -112
-      ],
+      "position": [-96, -112],
       "typeVersion": 1,
       "id": "0570e2a9-4101-49c4-8d98-013bd5d861fa",
       "name": "Sticky Note"
     },
     {
       "parameters": {
-        "content": "## TODO\n\nPegar  endpoint para postar os items no catálogo do pescador"
+        "content": "## TODO\n\nPegar endpoint para postar os items no catálogo do pescador"
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        1472,
-        -160
-      ],
+      "position": [1632, -288],
       "typeVersion": 1,
       "id": "0223d9ed-5763-4442-b21f-7c1eb443d79d",
       "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## TRATAMENTO DE ERROS\n\n**Falha técnica** (Download/Gemini/Agent com erro de sistema)\n→ `Responder Erro` — mensagem genérica\n\n**Dados incompletos no áudio** (sem peixe, preço ou quantidade)\n→ AI Agent detecta, retorna `{status:\"erro\", mensagem:\"...\"}` específico\n→ `Responder Erro Específico` — mensagem dinâmica do agente",
+        "color": 1
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [800, 400],
+      "typeVersion": 1,
+      "id": "error-note-id",
+      "name": "Sticky Note2"
     }
   ],
   "pinData": {},
@@ -223,6 +295,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Responder Erro",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -241,18 +320,61 @@
       "main": [
         [
           {
-            "node": "Information Extractor",
+            "node": "AI Agent - Extração e Validação",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder Erro",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Information Extractor": {
+    "AI Agent - Extração e Validação": {
+      "main": [
+        [
+          {
+            "node": "Verificar Resultado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder Erro",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verificar Resultado": {
+      "main": [
+        [
+          {
+            "node": "Sucesso ou Erro?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sucesso ou Erro?": {
       "main": [
         [
           {
             "node": "Responder no WhatsApp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder Erro Específico",
             "type": "main",
             "index": 0
           }
@@ -263,7 +385,7 @@
       "ai_languageModel": [
         [
           {
-            "node": "Information Extractor",
+            "node": "AI Agent - Extração e Validação",
             "type": "ai_languageModel",
             "index": 0
           }

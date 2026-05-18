@@ -249,3 +249,7 @@ With multiple developers:
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
+- Every generated tasks.md MUST include at least one task for each constitutional axis:
+  fluxo com tratamento de erro amigavel, atualizacao de docker-compose.yml quando houver
+  mudanca operacional, validacao de custo/alternativa gratuita, e extensao por no n8n
+  isolado.
