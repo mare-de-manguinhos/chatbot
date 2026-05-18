@@ -107,8 +107,7 @@ services:
     build: ./teste-chatbot
     container_name: bot-chatbot
     volumes:
-      - chatbot_db:/app/banco.db
-      - chatbot_audio:/app/audio
+      - chatbot_data:/app/data
     networks:
       - bot_network
     restart: unless-stopped
@@ -136,5 +135,4 @@ volumes:
   n8n_data:
   evolution_instances:
   evolution_store:
-  chatbot_db:
-  chatbot_audio:
+  chatbot_data:

@@ -9,6 +9,7 @@ RUN npm run build
 # Stage 2: app Python com frontend embutido
 FROM python:3.12-slim
 WORKDIR /app
+RUN mkdir -p /app/data /app/audio
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY app/ ./app/
