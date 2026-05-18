@@ -3,9 +3,9 @@ services:
     image: postgres:15-alpine
     container_name: bot-postgres
     environment:
-      - POSTGRES_USER=bot_user
-      - POSTGRES_PASSWORD=bot_password
-      - POSTGRES_DB=bot_db
+      - POSTGRES_USER=${POSTGRES_USER:-bot_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-bot_password}
+      - POSTGRES_DB=${POSTGRES_DB:-bot_db}
     ports:
       - "5432:5432"
     volumes:
@@ -14,7 +14,7 @@ services:
       - bot_network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U bot_user -d bot_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bot_user} -d ${POSTGRES_DB:-bot_db}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -41,17 +41,15 @@ services:
       - "5678:5678"
     environment:
       - DB_TYPE=postgresdb
-      - DB_POSTGRESDB_DATABASE=bot_db
+      - DB_POSTGRESDB_DATABASE=${POSTGRES_DB:-bot_db}
       - DB_POSTGRESDB_HOST=postgres
       - DB_POSTGRESDB_PORT=5432
-      - DB_POSTGRESDB_USER=bot_user
-      - DB_POSTGRESDB_PASSWORD=bot_password
+      - DB_POSTGRESDB_USER=${POSTGRES_USER:-bot_user}
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD:-bot_password}
       - N8N_BASIC_AUTH_ACTIVE=true
-      - N8N_BASIC_AUTH_USER=admin
-      - N8N_BASIC_AUTH_PASSWORD=senha_ifes
-      # URL interna para webhooks (acessível pela rede Docker)
-      - WEBHOOK_URL=http://bot-n8n:5678/
-      # Permitir cookies sem HTTPS em localhost
+      - N8N_BASIC_AUTH_USER=${N8N_USER:-admin}
+      - N8N_BASIC_AUTH_PASSWORD=${N8N_PASSWORD:-senha_ifes}
+      - WEBHOOK_URL=${N8N_WEBHOOK_URL:-http://localhost:5678/}
       - N8N_SECURE_COOKIE=false
     volumes:
       - n8n_data:/home/node/.n8n
@@ -63,44 +61,31 @@ services:
     restart: unless-stopped
 
   evolution-api:
-    # IMPORTANTE: o repo antigo 'atendai/evolution-api' parou na v2.2.3 (sem suporte a LID)
-    # O repo oficial novo é 'evoapicloud/evolution-api'
     image: evoapicloud/evolution-api:v2.3.7
     container_name: bot-evolution
     ports:
       - "8080:8080"
-    # DNS explícito para resolver conexão com WhatsApp (fix WSL2)
     dns:
       - 8.8.8.8
       - 8.8.4.4
     environment:
-      - SERVER_URL=http://localhost:8080
+      - SERVER_URL=${EVOLUTION_SERVER_URL:-http://localhost:8080}
       - CONFIG_SESSION_PHONE_CLIENT=evolution
       - CONFIG_SESSION_PHONE_NAME=bot_faculdade
-      # Versão atual do WhatsApp Web (de https://wppconnect.io/whatsapp-versions/)
-      # Se parar de funcionar, atualize para a versão mais recente do site acima
       - CONFIG_SESSION_PHONE_VERSION=2.3000.1036690171
       - AUTHENTICATION_TYPE=apikey
-      - AUTHENTICATION_API_KEY=sua_chave_api_super_secreta
-
-      # WebSocket habilitado (necessário para gerar QR Code no dashboard)
+      - AUTHENTICATION_API_KEY=${EVOLUTION_API_KEY:-sua_chave_api_super_secreta}
       - WEBSOCKET_ENABLED=true
-
-      # Configurações do Redis
       - REDIS_ENABLED=true
       - REDIS_URI=redis://bot-redis:6379
       - REDIS_PREFIX_KEY=evolution
       - CACHE_REDIS_ENABLED=true
       - CACHE_REDIS_URI=redis://bot-redis:6379
       - CACHE_REDIS_PREFIX_KEY=evolution
-
-      # Configurações do Banco de Dados
       - DATABASE_ENABLED=true
       - DATABASE_PROVIDER=postgresql
-      - DATABASE_CONNECTION_URI=postgresql://bot_user:bot_password@postgres:5432/bot_db?schema=evolution
+      - DATABASE_CONNECTION_URI=postgresql://${POSTGRES_USER:-bot_user}:${POSTGRES_PASSWORD:-bot_password}@postgres:5432/${POSTGRES_DB:-bot_db}?schema=evolution
       - DATABASE_CONNECTION_CLIENT_NAME=evolution_db
-
-      # Salvar dados de mensagens (necessário para baixar áudio)
       - DATABASE_SAVE_DATA_INSTANCE=true
       - DATABASE_SAVE_DATA_NEW_MESSAGE=true
       - DATABASE_SAVE_MESSAGE_UPDATE=true
@@ -118,6 +103,29 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  chatbot:
+    build: ./teste-chatbot
+    container_name: bot-chatbot
+    volumes:
+      - chatbot_db:/app/banco.db
+      - chatbot_audio:/app/audio
+    networks:
+      - bot_network
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: bot-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - bot_network
+    depends_on:
+      - chatbot
+    restart: unless-stopped
+
 networks:
   bot_network:
     driver: bridge
@@ -128,3 +136,5 @@ volumes:
   n8n_data:
   evolution_instances:
   evolution_store:
+  chatbot_db:
+  chatbot_audio:
