@@ -90,17 +90,6 @@
 - **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
 - **FR-005**: System MUST [behavior, e.g., "log all security events"]
 
-### Constitution Alignment *(mandatory)*
-
-- **CA-001 (Confiabilidade)**: Specification MUST descrever como o fluxo evita
-  silenciamiento de erros e qual mensagem amigavel retorna ao usuario em falhas.
-- **CA-002 (Infraestrutura como Codigo)**: Specification MUST listar configuracoes de
-  infraestrutura necessarias e onde entram no docker-compose.yml.
-- **CA-003 (Baixo Custo)**: Specification MUST justificar qualquer dependencia paga,
-  incluindo custo estimado e alternativa gratuita considerada.
-- **CA-004 (Extensibilidade Incremental)**: Specification MUST indicar quais novos nos
-  n8n serao adicionados de forma isolada e como o fluxo atual sera preservado.
-
 *Example of marking unclear requirements:*
 
 - **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]

@@ -29,7 +29,7 @@ description: "Task list template for feature implementation"
   ============================================================================
   IMPORTANT: The tasks below are SAMPLE TASKS for illustration purposes only.
   
-  The /speckit.tasks command MUST replace these with actual tasks based on:
+  The /speckit-tasks command MUST replace these with actual tasks based on:
   - User stories from spec.md (with their priorities P1, P2, P3...)
   - Feature requirements from plan.md
   - Entities from data-model.md
@@ -249,7 +249,3 @@ With multiple developers:
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
-- Every generated tasks.md MUST include at least one task for each constitutional axis:
-  fluxo com tratamento de erro amigavel, atualizacao de docker-compose.yml quando houver
-  mudanca operacional, validacao de custo/alternativa gratuita, e extensao por no n8n
-  isolado.
