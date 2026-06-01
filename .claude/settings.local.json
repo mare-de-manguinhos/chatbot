@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bash .specify/scripts/bash/check-prerequisites.sh --json --require-tasks --include-tasks)",
+      "Bash(gh run *)",
+      "Bash(gh --version)",
+      "Bash(where gh *)"
+    ]
+  }
+}
