@@ -1,1 +1,30 @@
-site_name: My Docs
+site_name: Bot Pescadores Manguinhos
+site_description: Bot WhatsApp para coleta de dados de pescadores via áudio, com transcrição automática por IA
+site_author: Manguinhos
+
+theme:
+  name: material
+  language: pt
+  palette:
+    - scheme: default
+      primary: blue
+      accent: cyan
+  features:
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - navigation.indexes
+
+nav:
+  - Visão Geral: index.md
+  - Para Desenvolvedores: developer.md
+  - Para Clientes: client.md
+  - Workflow n8n: workflow.md
+  - Troubleshooting: troubleshooting.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - tables
+  - attr_list
