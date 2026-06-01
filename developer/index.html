@@ -1,0 +1,1001 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Bot WhatsApp para coleta de dados de pescadores via áudio, com transcrição automática por IA">
+      
+      
+        <meta name="author" content="Manguinhos">
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../client/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Para Desenvolvedores - Bot Pescadores Manguinhos</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#para-desenvolvedores" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="Bot Pescadores Manguinhos" class="md-header__button md-logo" aria-label="Bot Pescadores Manguinhos" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Bot Pescadores Manguinhos
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Para Desenvolvedores
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="cyan"  aria-hidden="true"  type="radio" name="__palette" id="__palette_0">
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando a pesquisa
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Bot Pescadores Manguinhos" class="md-nav__button md-logo" aria-label="Bot Pescadores Manguinhos" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Bot Pescadores Manguinhos
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão Geral
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Para Desenvolvedores
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Para Desenvolvedores
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pre-requisitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pré-requisitos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-clonar-o-repositorio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Clonar o repositório
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-subir-os-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Subir os containers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-configurar-a-evolution-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Configurar a Evolution API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Configurar a Evolution API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-acessar-o-gerenciador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 — Acessar o Gerenciador
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-criar-instancia-e-conectar-whatsapp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 — Criar instância e conectar WhatsApp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-configurar-webhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 — Configurar Webhook
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-configurar-o-n8n" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Configurar o n8n
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Configurar o n8n">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-acessar-o-n8n" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 — Acessar o n8n
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-adicionar-credencial-do-google-gemini" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 — Adicionar credencial do Google Gemini
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-importar-o-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 — Importar o Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-testar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Testar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variaveis-de-ambiente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variáveis de Ambiente
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comandos-uteis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comandos Úteis
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../client/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Para Clientes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflow n8n
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pre-requisitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pré-requisitos
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#1-clonar-o-repositorio" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Clonar o repositório
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-subir-os-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Subir os containers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-configurar-a-evolution-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Configurar a Evolution API
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Configurar a Evolution API">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-acessar-o-gerenciador" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1 — Acessar o Gerenciador
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-criar-instancia-e-conectar-whatsapp" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2 — Criar instância e conectar WhatsApp
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-configurar-webhook" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3 — Configurar Webhook
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-configurar-o-n8n" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Configurar o n8n
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Configurar o n8n">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-acessar-o-n8n" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1 — Acessar o n8n
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-adicionar-credencial-do-google-gemini" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2 — Adicionar credencial do Google Gemini
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-importar-o-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3 — Importar o Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-testar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Testar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variaveis-de-ambiente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variáveis de Ambiente
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comandos-uteis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comandos Úteis
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="para-desenvolvedores">Para Desenvolvedores</h1>
+<p>Guia para subir o ambiente completo localmente.</p>
+<h2 id="pre-requisitos">Pré-requisitos</h2>
+<ul>
+<li><a href="https://www.docker.com/products/docker-desktop/">Docker Desktop</a> instalado e rodando</li>
+<li>API Key do Google AI Studio — gratuita, obter em <a href="https://aistudio.google.com/">aistudio.google.com</a></li>
+<li>Git</li>
+</ul>
+<h2 id="1-clonar-o-repositorio">1. Clonar o repositório</h2>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>&lt;url-do-repositorio&gt;
+<span class="nb">cd</span><span class="w"> </span>chatbot
+</code></pre></div>
+<h2 id="2-subir-os-containers">2. Subir os containers</h2>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</code></pre></div>
+<p>Aguarde todos os serviços ficarem saudáveis. PostgreSQL e Redis possuem healthchecks:</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>ps
+</code></pre></div>
+<p>A primeira execução pode demorar alguns minutos para baixar as imagens (~500 MB).</p>
+<h2 id="3-configurar-a-evolution-api">3. Configurar a Evolution API</h2>
+<h3 id="31-acessar-o-gerenciador">3.1 — Acessar o Gerenciador</h3>
+<p>Abra no navegador: <strong>http://localhost:8080/manager</strong></p>
+<p>Credenciais padrão:</p>
+<ul>
+<li><strong>API Key</strong>: <code>sua_chave_api_super_secreta</code></li>
+</ul>
+<h3 id="32-criar-instancia-e-conectar-whatsapp">3.2 — Criar instância e conectar WhatsApp</h3>
+<ol>
+<li>Clique em <strong>"Create Instance"</strong></li>
+<li>Escolha um nome (ex: <code>pescadores</code>)</li>
+<li><strong>Integration</strong>: <code>WHATSAPP-BAILEYS</code></li>
+<li>Clique em <strong>"Connect"</strong> para gerar o QR Code</li>
+<li>Escaneie com o celular:</li>
+<li><strong>WhatsApp → Configurações → Dispositivos Vinculados → Vincular Dispositivo</strong></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">QR Code não aparece?</p>
+<p>Verifique os logs: <code>docker compose logs -f evolution-api</code></p>
+<p>A variável <code>CONFIG_SESSION_PHONE_VERSION</code> no <code>docker-compose.yml</code> pode estar desatualizada — pegue a versão atual em <a href="https://wppconnect.io/whatsapp-versions/">wppconnect.io/whatsapp-versions</a>.</p>
+</div>
+<h3 id="33-configurar-webhook">3.3 — Configurar Webhook</h3>
+<p>No painel da Evolution API, vá em <strong>Events → Webhook</strong> e preencha:</p>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Enabled</strong></td>
+<td>✅ ligado</td>
+</tr>
+<tr>
+<td><strong>URL</strong></td>
+<td><code>http://bot-n8n:5678/webhook/evolution</code></td>
+</tr>
+<tr>
+<td><strong>Webhook Base64</strong></td>
+<td>✅ ligado</td>
+</tr>
+<tr>
+<td><strong>Events</strong></td>
+<td><code>MESSAGES_UPSERT</code> (mínimo)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Atenção</p>
+<p>A URL usa <code>bot-n8n</code> (nome do container na rede Docker interna), <strong>não</strong> <code>localhost</code>.</p>
+</div>
+<h2 id="4-configurar-o-n8n">4. Configurar o n8n</h2>
+<h3 id="41-acessar-o-n8n">4.1 — Acessar o n8n</h3>
+<p>Abra no navegador: <strong>http://localhost:5678</strong></p>
+<p>Na primeira vez, crie uma conta (dados ficam salvos localmente no volume Docker).</p>
+<h3 id="42-adicionar-credencial-do-google-gemini">4.2 — Adicionar credencial do Google Gemini</h3>
+<ol>
+<li><strong>Settings → Credentials → Add Credential</strong></li>
+<li>Busque <code>Google Gemini (PaLM) Api</code></li>
+<li>Cole sua API Key do Google AI Studio</li>
+<li>Salve</li>
+</ol>
+<h3 id="43-importar-o-workflow">4.3 — Importar o Workflow</h3>
+<ol>
+<li><strong>Add Workflow → Import from File</strong></li>
+<li>Selecione <code>chat-bot-workflow.json</code> da raiz do repositório</li>
+<li>No nó <strong>"Gemini - Transcrever Áudio"</strong>, selecione a credencial criada acima</li>
+<li>Nos nós <strong>"Download Áudio"</strong> e <strong>"Responder no WhatsApp"</strong>, confirme que os headers têm <code>apikey: sua_chave_api_super_secreta</code></li>
+<li>Clique em <strong>"Save"</strong> e ative o workflow (toggle no canto superior direito)</li>
+</ol>
+<h2 id="5-testar">5. Testar</h2>
+<ol>
+<li>De outro celular, envie um <strong>áudio</strong> via WhatsApp para o número conectado</li>
+<li>O bot deve responder com a transcrição em poucos segundos</li>
+<li>Acompanhe a execução em <strong>Executions</strong> no menu lateral do n8n</li>
+</ol>
+<h2 id="variaveis-de-ambiente">Variáveis de Ambiente</h2>
+<p>As variáveis com padrão podem ser sobrescritas criando um arquivo <code>.env</code> na raiz:</p>
+<table>
+<thead>
+<tr>
+<th>Variável</th>
+<th>Padrão</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POSTGRES_USER</code></td>
+<td><code>bot_user</code></td>
+<td>Usuário do banco</td>
+</tr>
+<tr>
+<td><code>POSTGRES_PASSWORD</code></td>
+<td><code>bot_password</code></td>
+<td>Senha do banco</td>
+</tr>
+<tr>
+<td><code>POSTGRES_DB</code></td>
+<td><code>bot_db</code></td>
+<td>Nome do banco</td>
+</tr>
+<tr>
+<td><code>N8N_USER</code></td>
+<td><code>admin</code></td>
+<td>Usuário do n8n</td>
+</tr>
+<tr>
+<td><code>N8N_PASSWORD</code></td>
+<td><code>senha_ifes</code></td>
+<td>Senha do n8n</td>
+</tr>
+<tr>
+<td><code>EVOLUTION_API_KEY</code></td>
+<td><code>sua_chave_api_super_secreta</code></td>
+<td>Chave de autenticação da Evolution API</td>
+</tr>
+<tr>
+<td><code>EVOLUTION_SERVER_URL</code></td>
+<td><code>http://localhost:8080</code></td>
+<td>URL pública da Evolution API</td>
+</tr>
+<tr>
+<td><code>N8N_WEBHOOK_URL</code></td>
+<td><code>http://localhost:5678/</code></td>
+<td>URL base do n8n para webhooks</td>
+</tr>
+</tbody>
+</table>
+<h2 id="comandos-uteis">Comandos Úteis</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Ver status dos containers</span>
+docker<span class="w"> </span>compose<span class="w"> </span>ps
+
+<span class="c1"># Ver logs de um serviço específico</span>
+docker<span class="w"> </span>compose<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>evolution-api
+docker<span class="w"> </span>compose<span class="w"> </span>logs<span class="w"> </span>-f<span class="w"> </span>n8n
+
+<span class="c1"># Reiniciar todos os serviços</span>
+docker<span class="w"> </span>compose<span class="w"> </span>down<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+
+<span class="c1"># Reiniciar apenas um serviço</span>
+docker<span class="w"> </span>compose<span class="w"> </span>restart<span class="w"> </span>n8n
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar ao topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "content.code.copy", "navigation.indexes"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
