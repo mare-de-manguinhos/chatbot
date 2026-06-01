@@ -1,4 +1,5 @@
 site_name: Bot Pescadores Manguinhos
+site_url: https://mare-de-manguinhos.github.io/chatbot/
 site_description: Bot WhatsApp para coleta de dados de pescadores via áudio, com transcrição automática por IA
 site_author: Manguinhos
 
