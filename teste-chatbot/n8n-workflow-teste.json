@@ -1,0 +1,155 @@
+{
+  "name": "teste-chatbot - Webhook de Teste de Áudio",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "teste-audio",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-0001-0001-000000000001",
+      "name": "Webhook Teste Áudio",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-400, 0],
+      "webhookId": "teste-audio"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Converte o áudio base64 recebido direto do sistema de testes\n// para formato binário compatível com o Gemini\n\nconst item = $input.first();\nconst base64Data = item.json.body?.audio_base64 || item.json.audio_base64;\nconst nomeArquivo = item.json.body?.nome_arquivo || item.json.nome_arquivo || 'audio.ogg';\n\nif (!base64Data) {\n  throw new Error('Campo audio_base64 ausente no corpo da requisição');\n}\n\nreturn {\n  json: { nome_arquivo: nomeArquivo },\n  binary: {\n    audio: {\n      data: base64Data,\n      mimeType: 'audio/ogg',\n      fileName: nomeArquivo\n    }\n  }\n};"
+      },
+      "id": "a1b2c3d4-0002-0002-0002-000000000002",
+      "name": "Base64 para Binário",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-160, 0]
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "inputType": "binary",
+        "binaryPropertyName": "audio",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0003-0003-0003-000000000003",
+      "name": "Gemini - Transcrever Áudio",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [80, 0],
+      "retryOnFail": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.content.parts[0].text }}",
+        "schemaType": "fromJson",
+        "jsonSchemaExample": "{\n    \"pescador\": \"Nome do pescador\",\n    \"peixe\": \"salmao\",\n    \"quantidade\": 5,\n    \"preco\": 10,\n    \"peso\": 1\n}",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0004-0004-0004-000000000004",
+      "name": "Extrator de Informações",
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [320, 0]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "a1b2c3d4-0005-0005-0005-000000000005",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [256, 208],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Monta o JSON de resposta para o sistema de testes\n// Inclui a transcrição e os campos extraídos\n\nconst transcricao = $('Gemini - Transcrever Áudio').first().json.content?.parts?.[0]?.text || '';\nconst extraido = $input.first().json.output || $input.first().json;\n\nconst resposta = {\n  transcricao: transcricao,\n  ...extraido\n};\n\nreturn { json: resposta };"
+      },
+      "id": "a1b2c3d4-0006-0006-0006-000000000006",
+      "name": "Montar Resposta JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [560, 0]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "a1b2c3d4-0007-0007-0007-000000000007",
+      "name": "Retornar JSON",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [800, 0]
+    },
+    {
+      "parameters": {
+        "content": "## Workflow de Teste — teste-chatbot\n\n**Como usar:**\n1. Ative este workflow no n8n\n2. Configure as credenciais do Google Gemini nos nós indicados\n3. A URL do webhook será: `<seu-n8n>/webhook/teste-audio`\n4. Registre essa URL no sistema teste-chatbot\n\n**Formato de entrada (POST):**\n```json\n{\n  \"audio_base64\": \"<base64 do arquivo .ogg>\",\n  \"nome_arquivo\": \"audio.ogg\"\n}\n```\n\n**Formato de saída:**\n```json\n{\n  \"transcricao\": \"texto transcrito...\",\n  \"pescador\": \"nome\",\n  \"peixe\": \"tipo\",\n  \"quantidade\": 5,\n  \"preco\": 10.50,\n  \"peso\": 2\n}\n```",
+        "height": 340,
+        "width": 400
+      },
+      "id": "a1b2c3d4-0008-0008-0008-000000000008",
+      "name": "Instruções de Uso",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [-400, -380]
+    }
+  ],
+  "connections": {
+    "Webhook Teste Áudio": {
+      "main": [[{ "node": "Base64 para Binário", "type": "main", "index": 0 }]]
+    },
+    "Base64 para Binário": {
+      "main": [[{ "node": "Gemini - Transcrever Áudio", "type": "main", "index": 0 }]]
+    },
+    "Gemini - Transcrever Áudio": {
+      "main": [[{ "node": "Extrator de Informações", "type": "main", "index": 0 }]]
+    },
+    "Extrator de Informações": {
+      "main": [[{ "node": "Montar Resposta JSON", "type": "main", "index": 0 }]]
+    },
+    "Montar Resposta JSON": {
+      "main": [[{ "node": "Retornar JSON", "type": "main", "index": 0 }]]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [[{ "node": "Extrator de Informações", "type": "ai_languageModel", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "instanceId": "teste-chatbot"
+  }
+}
