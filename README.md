@@ -122,26 +122,33 @@ Webhook → Filtrar Áudio → Download Áudio → Base64→Binário → Gemini 
 ## 📁 Estrutura do Projeto
 
 ```
-chat-bot-manguinhos/
-├── docker-compose.yml          # Infraestrutura (PostgreSQL, Redis, n8n, Evolution API)
+chatbot/
+├── docker-compose.yml          # Infraestrutura (PostgreSQL, Redis, n8n, Evolution API, Nginx)
 ├── chat-bot-workflow.json      # Workflow n8n (importar no painel)
-├── .specify/memory/constitution.md # Regras de governanca do projeto
-└── README.md                   # Este arquivo
+├── nginx/
+│   └── nginx.conf              # Configuração do proxy reverso
+├── teste-chatbot/              # Interface web (frontend)
+├── chatbot-manguinhos/         # Documentação MkDocs
+│   ├── mkdocs.yml
+│   └── docs/
+└── .specify/                   # Governança e especificações do projeto
 ```
+
+> 📖 **Documentação completa**: [mare-de-manguinhos.github.io/chatbot](https://mare-de-manguinhos.github.io/chatbot/)
 
 ## 📜 Constituição do Projeto
 
-Este repositorio adota uma constituicao em `.specify/memory/constitution.md` com quatro
-principios obrigatorios:
+Este repositório adota uma constituição em `.specify/memory/constitution.md` com quatro
+princípios obrigatórios:
 
-1. **Confiabilidade do Fluxo**: o pipeline audio -> transcricao -> resposta nunca silencia
-   erros e sempre retorna mensagem amigavel ao pescador.
-2. **Infraestrutura como Codigo**: toda configuracao operacional vive em
-   `docker-compose.yml` e no repositorio.
+1. **Confiabilidade do Fluxo**: o pipeline áudio → transcrição → resposta nunca silencia
+   erros e sempre retorna mensagem amigável ao pescador.
+2. **Infraestrutura como Código**: toda configuração operacional vive em
+   `docker-compose.yml` e no repositório.
 3. **Baixo Custo Operacional**: prioriza APIs gratuitas (Gemini AI Studio) e exige
-   justificativa explicita para servicos pagos.
-4. **Extensibilidade Incremental**: novas features entram como nos n8n isolados, sem
-   refatoracao ampla do fluxo existente.
+   justificativa explícita para serviços pagos.
+4. **Extensibilidade Incremental**: novas features entram como nós n8n isolados, sem
+   refatoração ampla do fluxo existente.
 
 ---
 

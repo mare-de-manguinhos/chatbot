@@ -1,0 +1,2 @@
+# O workflow de deploy do MkDocs está em .github/workflows/deploy-mkdocs.yml na raiz do repositório.
+# Este arquivo não é executado pelo GitHub Actions por estar em um subdiretório.
