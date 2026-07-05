@@ -1,5 +1,13 @@
 # Bot Pescadores Manguinhos
 
+## Integrantes: 
+- Allicia Rocha
+- Guilherme Gomes
+- Manuely Lemos
+- Rafael Deps
+- Thiago Deps
+
+## Descrição
 Bot que recebe áudios de pescadores via WhatsApp, transcreve automaticamente usando **Google Gemini** e extrai dados estruturados de venda (espécie, peso e preço). A orquestração é feita pelo **n8n** e a conexão com WhatsApp pela **Evolution API**.
 
 ## Arquitetura
