@@ -55,6 +55,8 @@ Este repositório adota uma constituição em `.specify/memory/constitution.md` 
 3. **Baixo Custo Operacional** — prioriza APIs gratuitas (Gemini AI Studio); serviços pagos exigem justificativa explícita.
 4. **Extensibilidade Incremental** — novas features entram como nós n8n isolados, sem refatoração ampla do fluxo existente.
 
+---
+
 <div align="center">
 
 **Equipe:** Allicia Rocha · Guilherme Gomes · Manuely Lemos · Rafael Deps · Thiago Deps  
