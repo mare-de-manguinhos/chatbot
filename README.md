@@ -1,12 +1,5 @@
 # Bot Pescadores Manguinhos
 
-## Integrantes: 
-- Allicia Rocha
-- Guilherme Gomes
-- Manuely Lemos
-- Rafael Deps
-- Thiago Deps
-
 ## Descrição
 Bot que recebe áudios de pescadores via WhatsApp, transcreve automaticamente usando **Google Gemini** e extrai dados estruturados de venda (espécie, peso e preço). A orquestração é feita pelo **n8n** e a conexão com WhatsApp pela **Evolution API**.
 
@@ -61,3 +54,11 @@ Este repositório adota uma constituição em `.specify/memory/constitution.md` 
 2. **Infraestrutura como Código** — toda configuração operacional vive no `docker-compose.yml` e no repositório.
 3. **Baixo Custo Operacional** — prioriza APIs gratuitas (Gemini AI Studio); serviços pagos exigem justificativa explícita.
 4. **Extensibilidade Incremental** — novas features entram como nós n8n isolados, sem refatoração ampla do fluxo existente.
+
+<div align="center">
+
+**Equipe:** Allicia Rocha · Guilherme Gomes · Manuely Lemos · Rafael Deps · Thiago Deps  
+**Professor:** Paulo Sérgio dos Santos Júnior  
+**Ifes Campus Serra** — Extensão em Desenvolvimento de Software
+
+</div>
